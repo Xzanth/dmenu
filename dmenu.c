@@ -61,6 +61,7 @@ static float padding = 0.0;
 static ColorSet *normcol;
 static ColorSet *selcol;
 static Atom clip, utf8;
+static Bool nostdin = False;
 static Bool topbar = True;
 static Bool running = True;
 static int ret = 0;
@@ -111,6 +112,8 @@ main(int argc, char *argv[]) {
 			line_height_ratio = atof(argv[++i]);
 		else if(!strcmp(argv[i], "-p"))   /* adds prompt to left of input field */
 			prompt = argv[++i];
+		else if(!strcmp(argv[i], "-po"))  /* adds prompt and doesn't take any stdin */
+			prompt = argv[++i], nostdin = True;
 		else if(!strcmp(argv[i], "-fn"))  /* font or font set */
 			font = argv[++i];
 		else if(!strcmp(argv[i], "-nb"))  /* normal background color */
@@ -131,10 +134,14 @@ main(int argc, char *argv[]) {
 
 	if(fast) {
 		grabkeyboard();
-		readstdin();
+		if (!nostdin) {
+			readstdin();
+		}
 	}
 	else {
-		readstdin();
+		if (!nostdin) {
+			readstdin();
+		}
 		grabkeyboard();
 	}
 	setup();
